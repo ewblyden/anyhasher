@@ -2,7 +2,7 @@ import hashController from "./hash.controller";
 
 function createResponse() {
     return {
-        body: null,        
+        body: null,
         status: function(code) {
             this.statusCode = code;
             return {
