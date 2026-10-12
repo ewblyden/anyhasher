@@ -12,7 +12,7 @@ jobs:
           key: node-modules-cache
 
       - name: Checkout repository code
-        uses: actions/checkout@v1
+        uses: actions/checkout@v3
 
       - name: Setup Node
         uses: actions/setup-node@v3
@@ -29,7 +29,7 @@ jobs:
         run: cd backend/build && zip -r artifact.zip ./ -x '*.git*'
 
       - name: Upload Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: backend-artifact
           path: backend/build/artifact.zip      
