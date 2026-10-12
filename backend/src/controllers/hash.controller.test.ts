@@ -2,8 +2,7 @@ import hashController from "./hash.controller";
 
 function createResponse() {
     return {
-        body: null,
-        statusCode: null,        
+        body: null,        
         status: function(code) {
             this.statusCode = code;
             return {
@@ -12,6 +11,7 @@ function createResponse() {
                 },
             };
         },
+        statusCode: null,
     };
 }
 
