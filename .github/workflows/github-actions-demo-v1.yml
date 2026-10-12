@@ -4,7 +4,11 @@ jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
     steps:      
+      - name: Run a one-line Hello script
+        run: echo "Hello, GitHub Actions!"
       - name: Checkout repository code
         uses: actions/checkout@v1
-      - name: Run a one-line script
-        run: echo "Hello, GitHub Actions!"
+      - name: Install backend dependencies
+        run: cd backend && npm i
+      - name: Build backend
+        run: cd backend && npm run build
