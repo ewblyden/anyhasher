@@ -1,7 +1,7 @@
 name: GitHub Actions Demo - Continuous Integration
 on: [push]
 jobs:
-  build:
+  build:    
     runs-on: ubuntu-latest
     steps:
       - name: Cache Dependencies
@@ -20,7 +20,7 @@ jobs:
           node-version: '24'
         
       - name: Install backend dependencies
-        run: cd backend && npm i
+        run: cd backend && npm ci
 
       - name: Build backend
         run: cd backend && npm run build
@@ -52,7 +52,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache-node-modules.outputs.cache-hit != 'true'
-        run: cd backend && npm i
+        run: cd backend && npm ci
 
       - name: Lint code
         run: cd backend && npm run lint
