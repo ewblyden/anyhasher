@@ -36,7 +36,7 @@ jobs:
 
   lint:
     needs: [build]
-    name: Ensure Code Style
+    name: Ensure Code Style (Lint)
     runs-on: ubuntu-latest
     
     steps:
