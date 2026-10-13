@@ -3,6 +3,5 @@ then
     echo "Success!"
     exit 0
 else
-    echo "Correct hash not found!"
+    echo "Correct hash not found at: ${BACKEND_URL}/hash/test"
     exit 1
-fi

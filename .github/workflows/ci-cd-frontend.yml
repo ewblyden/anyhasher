@@ -1,11 +1,11 @@
-name: frontend - CI-CD
+name: Frontend - CI-CD
 on:
   push:
     paths:
       - 'frontend/**'
       - '.github/workflows/ci-cd-frontend.yml'
     branches:
-      - sub
+      - main
   pull_request:
     paths:
       - 'frontend/**'
@@ -97,7 +97,7 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
 
       - name: Install dependencies
-        run: cd frontend && npm i
+        run: cd frontend && npm ci
 
       - name: Run Unit Tests
         run: cd frontend && npm t
@@ -134,8 +134,8 @@ jobs:
       - name: Build
         run: cd frontend && npm run build
 
-      #- name: Perform Analysis
-      #  uses: github/codeql-action/analyze@v4
+      - name: Perform Analysis
+        uses: github/codeql-action/analyze@v4
 
   deploy_to_eb:
     name: Deploy to Elastic Beanstalk
