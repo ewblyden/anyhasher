@@ -5,3 +5,4 @@ then
 else
     echo "Correct hash not found at: ${BACKEND_URL}/hash/test"
     exit 1
+fi
