@@ -189,5 +189,7 @@ jobs:
         run: |
           echo "Running smoke test for production deployment..."
           echo "Verifying production deployment at ${{ needs.deploy_to_eb.outputs.url }}"
-          curl -f ${{ needs.deploy_to_eb.outputs.url }}
+          bash backend/e2e/backend-smoke.sh
+        env:
+          BACKEND_URL: http://anyhasher-env.eba-typr3pdy.us-east-2.elasticbeanstalk.com/
 
