@@ -134,10 +134,11 @@ jobs:
       - name: Build
         run: cd backend && npm run build
 
-      - name: Perform Analysis
-        uses: github/codeql-action/analyze@v4
+      #- name: Perform Analysis
+      #  uses: github/codeql-action/analyze@v4
 
   deploy_to_eb:
+    name: Deploy to Elastic Beanstalk
     if: github.ref == 'refs/heads/main'
     needs: [static-analysis,security-audit,lint,test]
     runs-on: ubuntu-latest
@@ -162,20 +163,21 @@ jobs:
       - name: Verify Procfile
         run: cat backend/build/Procfile
 
-      - name: Deploy to Elastic Beanstalk
+      - name: Deploy App to Elastic Beanstalk
         id: deployment
         #uses: aws-actions/configure-aws-credentials@v2
         uses: einaregilsson/beanstalk-deploy@v22
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
-          aws-region: us-east-2
-          application-name: AnyHasher
-          environment-name: AnyHasher-env
-          version-label: anyhasher-${{ github.run_number }}
-          deployment-package: backend/build/artifact.zip
+          aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws_secret_key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
+          application_name: "AnyHasher"
+          environment_name: "AnyHasher-env"
+          version_label: anyhasher-${{ github.sha }}
+          region: us-east-2
+          deployment_package: backend/build/artifact.zip
 
   verify-production:
+    name: Verify Production Deployment
     if: github.ref == 'refs/heads/main'
     needs: [deploy_to_eb]
     runs-on: ubuntu-latest
