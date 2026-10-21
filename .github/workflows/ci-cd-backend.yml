@@ -175,6 +175,7 @@ jobs:
           version_label: anyhasher-be-${{ github.sha }}
           region: us-east-2
           deployment_package: backend/build/artifact.zip
+          use_existing_version_if_available: true
 
   verify-production:
     name: Verify Production Deployment
