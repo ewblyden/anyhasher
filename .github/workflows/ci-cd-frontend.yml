@@ -1,11 +1,11 @@
 name: Frontend - CI-CD
 on:
-  push:
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/ci-cd-frontend.yml'
-    branches:
-      - main
+  #push:
+  #  paths:
+  #    - 'frontend/**'
+  #    - '.github/workflows/ci-cd-frontend.yml'
+  #  branches:
+  #    - main
   pull_request:
     paths:
       - 'frontend/**'
@@ -191,4 +191,3 @@ jobs:
           echo "Running smoke test for production deployment..."
           echo "Verifying production deployment at ${{ needs.deploy_to_eb.outputs.url }}"
           curl -f ${{ needs.deploy_to_eb.outputs.url }}
-
