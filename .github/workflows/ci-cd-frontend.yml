@@ -178,7 +178,7 @@ jobs:
           use_existing_version_if_available: true
 
   verify-production:
-    name: Verify Production Deployment
+    name: Verify Production Deployment is Stable
     if: github.ref == 'refs/heads/main'
     needs: [deploy_to_eb]
     runs-on: ubuntu-latest
