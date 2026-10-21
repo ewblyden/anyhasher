@@ -1,0 +1,141 @@
+name: Deploy
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows:
+      #- Backend CI-CD
+      - Frontend CI-CD
+    types:
+      - completed
+
+concurrency:
+  group: "prod-green"
+  cancel-in-progress: true
+
+jobs:
+  deploy_backend:
+    runs-on: ubuntu-latest
+    outputs:
+      url: ${{ steps.be_infra.outputs.backend_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_wrapper: false
+          terraform_version: 1.16.5
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
+          aws-region: us-east-2
+
+      - name: Create Infrastructure
+        id: be_infra
+        run: |
+          cd util/terraform/backend
+          echo "instance_name=\"ewbly-anyhasher-backend-${{ github.run_number }}\"" >> terraform.tfvars
+          terraform init
+          terraform plan
+          terraform apply -auto-approve
+          export EC2_PUBLIC_IP=$(terraform output -raw ec2_public_ip)
+          echo "EC2_HOST=${EC2_PUBLIC_IP}" >> $GITHUB_ENV
+          echo "::set-output name=backend_url::$EC2_PUBLIC_IP"
+          echo "backend_url=$EC2_PUBLIC_IP" >> $GITHUB_OUTPUT
+
+  deploy_frontend:
+    runs-on: ubuntu-latest
+    needs: deploy_backend
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Deploy Frontend
+        run: |
+          echo "Deploying frontend to backend URL: ${{ needs.deploy_backend.outputs.url }}"
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_wrapper: false
+          terraform_version: 1.16.5
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
+          aws-region: us-east-2
+
+      - name: Create Frontend Infrastructure
+        id: fe_infra
+        run: |
+          cd util/terraform/frontend
+          echo "bucket_name=\"ewbly-anyhasher-frontend-${{ github.run_number }}\"" >> terraform.tfvars
+          terraform init
+          terraform plan
+          terraform apply -auto-approve
+          export S3_BUCKET_NAME=$(terraform output -raw bucket_name)
+          export S3_URL=$(terraform output -raw website_endpoint)
+          echo "::set-output name=frontend_url::$S3_URL"
+          echo "frontend_url=$S3_URL" >> $GITHUB_OUTPUT
+
+  destroy_backend:
+    runs-on: ubuntu-latest
+    needs: [deploy_backend, deploy_frontend]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_wrapper: false
+          terraform_version: 1.16.5
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
+          aws-region: us-east-2
+
+      - name: Destroy Infrastructure
+        id: be_infra
+        run: |
+          cd util/terraform/backend
+          echo "instance_name=\"ewbly-anyhasher-backend-${{ github.run_number }}\"" >> terraform.tfvars
+          terraform init
+          terraform destroy -auto-approve
+
+  destroy_frontend:
+    runs-on: ubuntu-latest
+    needs: [deploy_backend, deploy_frontend]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_wrapper: false
+          terraform_version: 1.16.5
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v6.3.0
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ACCESS_KEY_SECRET }}
+          aws-region: us-east-2
+
+      - name: Destroy Frontend Infrastructure
+        id: fe_infra
+        run: |
+          cd util/terraform/frontend
+          echo "bucket_name=\"ewbly-anyhasher-frontend-${{ github.run_number }}\"" >> terraform.tfvars
+          terraform init
+          terraform destroy -auto-approve

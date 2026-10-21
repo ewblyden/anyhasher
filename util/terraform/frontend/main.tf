@@ -1,25 +1,25 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "~> 4.16"
     }
   }
-  required_version = ">= 1.2.0"  
+  required_version = ">= 1.2.0"
 
   backend "s3" {
-    bucket = "anyhasher.terraform.states"
-    key    = "anyhasher-fe.tfstate"
-    region = "us-east-1"
+    bucket = "ewbly-anyhasher.terraform.states"
+    key    = "ewbly-anyhasher-fe.tfstate"
+    region = "us-east-2"
   }
 }
 
 provider "aws" {
-  region = "us-east-1"
+  region = "us-east-2"
 }
 
 module "s3" {
-  source = "./modules/s3"
+  source      = "./modules/s3"
   bucket_name = var.bucket_name
 }
 

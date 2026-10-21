@@ -5,7 +5,7 @@ data "aws_iam_policy_document" "website_policy" {
     ]
     principals {
       identifiers = ["*"]
-      type = "AWS"
+      type        = "AWS"
     }
     resources = [
       "arn:aws:s3:::${var.bucket_name}/*"
@@ -14,21 +14,34 @@ data "aws_iam_policy_document" "website_policy" {
 }
 
 resource "aws_s3_bucket" "frontend" {
-  bucket = var.bucket_name  
+  bucket        = var.bucket_name
   force_destroy = true
   tags = {
     Environment = "Production"
   }
 }
 
+resource "aws_s3_bucket_public_access_block" "frontend" {
+  bucket = aws_s3_bucket.frontend.id
+
+  block_public_acls       = true
+  ignore_public_acls      = true
+  block_public_policy     = false # <-- THIS MUST BE FALSE TO APPLY THE CROSS-ACCOUNT POLICY
+  restrict_public_buckets = false # <-- SET TO FALSE TO PREVENT CROSS-ACCOUNT REJECTION
+}
+
 resource "aws_s3_bucket_policy" "allow_access_from_another_account" {
   bucket = aws_s3_bucket.frontend.id
   policy = data.aws_iam_policy_document.website_policy.json
+
+  # Prevents race conditions by ensuring the public access block configuration 
+  # is applied *before* Terraform tries to upload the bucket policy.
+  depends_on = [aws_s3_bucket_public_access_block.frontend]
 }
 
 resource "aws_s3_bucket_website_configuration" "frontend_configuration" {
   bucket = aws_s3_bucket.frontend.id
-  
+
   index_document {
     suffix = "index.html"
   }
@@ -39,7 +52,7 @@ resource "aws_s3_bucket_website_configuration" "frontend_configuration" {
 }
 
 variable "bucket_name" {
-  description = "Website bucket name"
+  description = "Terraform Website bucket name"
 }
 
 output "website_endpoint" {
