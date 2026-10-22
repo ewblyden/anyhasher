@@ -1,11 +1,11 @@
-name: Frontend - CI-CD
+name: Frontend - CI-CD-3
 on:
-  #push:
-  #  paths:
-  #    - 'frontend/**'
-  #    - '.github/workflows/ci-cd-frontend.yml'
-  #  branches:
-  #    - main
+  push:
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/ci-cd-frontend.yml'
+    branches:
+      - main
   pull_request:
     paths:
       - 'frontend/**'
