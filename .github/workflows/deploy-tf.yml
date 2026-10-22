@@ -9,7 +9,7 @@ on:
       - completed
 
 concurrency:
-  group: "prod-green"
+  group: "prod-green-env"
   cancel-in-progress: true
 
 jobs:
