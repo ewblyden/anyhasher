@@ -2,10 +2,10 @@ terraform {
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = "~> 4.16"
+      version = "~> 6.0"
     }
   }
-  required_version = ">= 1.2.0"
+  required_version = ">= 1.5.0"
 
   backend "s3" {
     bucket = "ewbly-anyhasher.terraform.states"
