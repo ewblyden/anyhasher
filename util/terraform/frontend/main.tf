@@ -9,7 +9,7 @@ terraform {
 
   backend "s3" {
     bucket = "ewbly-anyhasher.terraform.states"
-    key    = "ewbly-anyhasher-fe.tfstate"
+    #  key    = "ewbly-anyhasher-fe.tfstate"
     region = "us-east-2"
   }
 }
