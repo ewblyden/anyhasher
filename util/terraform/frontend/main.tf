@@ -7,11 +7,11 @@ terraform {
   }
   required_version = ">= 1.5.0"
 
-  backend "s3" {
-    bucket = "ewbly-anyhasher.terraform.states"
-    #  key    = "ewbly-anyhasher-fe.tfstate"
-    region = "us-east-2"
-  }
+  #backend "s3" {
+  #  bucket = "ewbly-anyhasher.terraform.states"
+  #  key    = "ewbly-anyhasher-fe.tfstate"
+  #  region = "us-east-2"
+  #}
 }
 
 provider "aws" {
@@ -20,7 +20,8 @@ provider "aws" {
 
 module "s3" {
   source      = "./modules/s3"
-  bucket_name = var.bucket_name
+  bucket_name = "ewbly-anyhasher.terraform.states"
+  #bucket_name = var.bucket_name
 }
 
 variable "bucket_name" {

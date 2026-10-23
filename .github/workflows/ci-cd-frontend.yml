@@ -1,4 +1,4 @@
-name: Frontend - CI-CD-8
+name: Frontend - CI-CD-9
 on:
   push:
     paths:
