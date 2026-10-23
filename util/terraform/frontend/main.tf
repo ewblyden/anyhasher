@@ -20,7 +20,7 @@ provider "aws" {
 
 module "s3" {
   source      = "./modules/s3"
-  bucket_name = "ewbly-anyhasher.terraform.states"
+  bucket_name = "ewbly-anyhasher.terraform"
   #bucket_name = var.bucket_name
 }
 
