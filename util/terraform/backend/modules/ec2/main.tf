@@ -1,19 +1,23 @@
-resource "aws_instance" "anyhasher_server" {
-  ami           = "ami-0149b2da6ceec4bb0"
+resource "aws_instance" "ewbly-anyhasher_server" {
+  ami           = "ami-02ad619be5bc165df"
   instance_type = "t2.micro"
-  key_name      = "anyhasher"
-  tags          = { Name = var.instance_name }
+  key_name      = "ewbly.gmail.KeyPair"
+
+  tags = {
+    Name    = var.instance_name,
+    Purpose = "Course"
+  }
 }
 
 variable "instance_name" {
-  description = "EC2 instance name"
+  description = "Terraform EC2 instance name"
 }
 
 output "ec2_public_ip" {
-  value = aws_instance.anyhasher_server.public_ip
+  value = aws_instance.ewbly-anyhasher_server.public_ip
 }
 
 output "ec2_public_url" {
-  value = aws_instance.anyhasher_server.public_dns
+  value = aws_instance.ewbly-anyhasher_server.public_dns
 }
 
