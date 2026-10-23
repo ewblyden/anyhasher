@@ -3,8 +3,8 @@ on:
   workflow_dispatch:
   workflow_run:
     workflows:
-      #- Backend - CI-CD-6
-      - Frontend - CI-CD-6
+      #- Backend - CI-CD-7
+      - Frontend - CI-CD-7
     types:
       - completed
 
